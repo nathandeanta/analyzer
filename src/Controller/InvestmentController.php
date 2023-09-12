@@ -6,25 +6,36 @@ use App\Entity\InvestmentEntity;
 use App\Repository\InvestmentEntityRepository;
 use App\Repository\TotalRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class InvestmentController extends AbstractController
+class InvestmentController extends Controller
 {
     #[Route('/investment/register', name: 'app_invest_register_view')]
-    public function index(): Response
+    public function index(SessionInterface $session): Response
     {
+        if(($valid = $this->validSession($session)) === false) {
+            return $this->render('index/index.html.twig');
+        }
+
         return $this->render('investment/register.html.twig', [
             'controller_name' => 'InvestmentController',
-            'title'=> "Register entry"
+            'title'=> "Register entry",
+            'session'=> $this->sessionDTO
         ]);
     }
 
     #[Route('/investment/list', name: 'app_invest_list', methods: ["GET"])]
-    public function list(InvestmentEntityRepository $investmentEntityRepository, TotalRepository $totalRepository): Response
+    public function list(InvestmentEntityRepository $investmentEntityRepository,
+                         TotalRepository $totalRepository,
+                         SessionInterface $session): Response
     {
+        if(($valid = $this->validSession($session)) === false) {
+            return $this->render('index/index.html.twig');
+        }
+
         $list = $investmentEntityRepository->findBy([], ['date' => 'DESC']);
 
         $total = $totalRepository->findAll();
@@ -32,14 +43,19 @@ class InvestmentController extends AbstractController
         return $this->render('investment/index.html.twig', [
             'title'=> "List Investments",
             'investments'=> $list,
-            'total'=> $total[0]->getAmount()
+            'total'=> $total[0]->getAmount(),
+            'session'=> $this->sessionDTO
         ]);
     }
 
     #[Route('/investment/list/filter', name: 'app_investment_filter', methods:["POST", "GET"])]
     public function getAllFilter(Request $request, InvestmentEntityRepository $investmentEntityRepository,
-                                 TotalRepository $totalRepository): Response
+                                 TotalRepository $totalRepository,
+                                SessionInterface $session): Response
     {
+        if(($valid = $this->validSession($session)) === false) {
+            return $this->render('index/index.html.twig');
+        }
 
         if ($request->isMethod('POST')) {
 
@@ -61,7 +77,8 @@ class InvestmentController extends AbstractController
                 "start"=> $start,
                 "end"=>$end,
                 "type"=>$type,
-                "title"=> "List Investments"
+                "title"=> "List Investments",
+                'session'=> $this->sessionDTO
             ]);
 
         }
@@ -71,8 +88,14 @@ class InvestmentController extends AbstractController
     }
 
     #[Route('/investment/delete/{id}', name: 'delete_investment', methods:["GET"])]
-    public function deleteCashFlow(Request $request, InvestmentEntityRepository $investmentEntityRepository, int $id, EntityManagerInterface $entityManager): Response
+    public function deleteCashFlow(Request $request, InvestmentEntityRepository $investmentEntityRepository,
+                                   int $id, EntityManagerInterface $entityManager,
+                                   SessionInterface $session): Response
     {
+        if(($valid = $this->validSession($session)) === false) {
+            return $this->render('index/index.html.twig');
+        }
+
         $investment = $investmentEntityRepository->find($id);
 
         if (!$investment) {
@@ -86,8 +109,13 @@ class InvestmentController extends AbstractController
     }
 
     #[Route('/investment/create', name: 'app_investment_create', methods: ["POST"])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request,
+                           EntityManagerInterface $entityManager,
+    SessionInterface $session): Response
     {
+        if(($valid = $this->validSession($session)) === false) {
+            return $this->render('index/index.html.twig');
+        }
 
         if ($request->isMethod('POST')) {
 
@@ -113,6 +141,6 @@ class InvestmentController extends AbstractController
             return $this->redirectToRoute('app_invest_register_view');
         }
 
-        return $this->render('investment/register.html.twig',["title"=> "Register entry"]);
+        return $this->render('investment/register.html.twig',["title"=> "Register entry", 'session'=> $this->sessionDTO]);
     }
 }
