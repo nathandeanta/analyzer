@@ -16,6 +16,29 @@ class Total
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private $amount;
+
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
+    private ?string $service;
+
+    #[ORM\Column(type: "datetime",nullable: true)]
+    private $date;
+
+    /**
+     * @return mixed
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param mixed $date
+     */
+    public function setDate($date): void
+    {
+        $this->date = $date;
+    }
+
     public function getIdTotal(): ?int
     {
         return $this->id_total;
@@ -35,6 +58,22 @@ class Total
     public function setAmount($amount): void
     {
         $this->amount = $amount;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getService(): ?string
+    {
+        return $this->service;
+    }
+
+    /**
+     * @param string|null $service
+     */
+    public function setService(?string $service): void
+    {
+        $this->service = $service;
     }
 
 

@@ -209,15 +209,30 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic_investment" aria-expanded="false" aria-controls="ui-basic">
                         <span class="menu-title">Investment</span>
                         <i class="menu-arrow"></i>
                         <i class="mdi mdi-coin menu-icon"></i>
                     </a>
-                    <div class="collapse" id="ui-basic">
+                    <div class="collapse" id="ui-basic_investment">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{ path('app_invest_register_view') }}">Register</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{ path('app_invest_list') }}">List</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic_debts" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title">Debts</span>
+                        <i class="menu-arrow"></i>
+                        <i class="mdi mdi-cash-usd menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic_debts">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{{ path('app_debts_register_view') }}">Register</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{ path('app_debts_list') }}">List</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{ path('app_debts_upload_view') }}">Upload Debts</a></li>
                         </ul>
                     </div>
                 </li>

@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Service\CurrencyService;
+use App\Service\EmailService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends Controller
@@ -17,6 +20,16 @@ class IndexController extends Controller
         }else{
             return $this->redirectToRoute('app_dashboard');
         }
+    }
+
+    #[Route('/mail', name: 'app_index_mail')]
+    public function mail(MailerInterface $mailer): Response
+    {
+       $emailService = new EmailService($mailer);
+
+       $emailService->sendMail();
+
+        return $this->redirectToRoute('app_dashboard');
     }
 
     #[Route('/dashboard', name: 'app_dashboard')]
