@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\CashFlow;
+use App\Entity\TypeFlow;
 use App\Repository\CashFlowRepository;
+use App\Repository\TypeFlowRepository;
+use App\Repository\UserRepository;
 use App\Service\ExcelService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +29,9 @@ class CashFlowController extends Controller
             $value = $request->request->get('value');
             $type = $request->request->get('type');
             $date = $request->request->get('date');
+            $category = $request->request->get("category");
+            $bank = $request->request->get("bank");
+            $currency = $request->request->get("currency");
 
             $cashFlow = new CashFlow();
             $cashFlow->setValue($value);
@@ -33,12 +39,18 @@ class CashFlowController extends Controller
             $cashFlow->setDate(new \DateTime($date));
             $cashFlow->setCreatedAt(new \DateTime());
             $cashFlow->setDescription($description);
+            $cashFlow->setBank($bank);
+            $cashFlow->setCurrency($currency);
+
+            if(!empty($category)) {
+                $categoryEntity = $entityManager->getRepository(TypeFlow::class)->find($category);
+                $cashFlow->setTypeFlow($categoryEntity);
+            }
 
             $entityManager->persist($cashFlow);
             $entityManager->flush();
 
-
-            return $this->redirectToRoute('create_cash_flow');
+            return $this->redirectToRoute('app_cash_flow_all');
         }
 
         return $this->render('cash_flow/create-view.html.twig',['session'=> $this->sessionDTO]);
@@ -84,13 +96,21 @@ class CashFlowController extends Controller
     }
 
     #[Route('/cashFlow/view/create', name: 'create_cash_flow', methods:["GET"])]
-    public function createView(SessionInterface $session): Response
+    public function createView(SessionInterface $session,
+                               TypeFlowRepository $typeFlowRepository,
+                               UserRepository $userRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig');
         }
 
-        return $this->render('cash_flow/create-view.html.twig',['session'=> $this->sessionDTO]);
+        $user = $userRepository->find($this->sessionDTO->getIdUser());
+        $categories = $typeFlowRepository->findBy(['user' => $user]);
+
+        return $this->render('cash_flow/create-view.html.twig',
+            [
+                'session'=> $this->sessionDTO,
+                'categories'=> $categories]);
     }
 
     //app_cash_flow_uplaod_bank
@@ -200,7 +220,9 @@ class CashFlowController extends Controller
     }
 
     #[Route('/cashFlow/edit/{id}', name: 'edit_cash_flow', methods:["GET"])]
-    public function editCashFlow(Request $request, CashFlowRepository $cashFlowRepository, int $id, SessionInterface $session): Response
+    public function editCashFlow(Request $request, CashFlowRepository $cashFlowRepository,
+                                 int $id, SessionInterface $session,
+                                 TypeFlowRepository $typeFlowRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig');
@@ -208,12 +230,14 @@ class CashFlowController extends Controller
 
         $cashFlow = $cashFlowRepository->find($id);
 
+        $categories = $typeFlowRepository->findBy(['user' => $user]);
+
         if (!$cashFlow) {
             throw $this->createNotFoundException('not found');
         }
 
         return $this->render('cash_flow/edit-view.html.twig', [
-            'cashFlow' => $cashFlow,['session'=> $this->sessionDTO]
+            'cashFlow' => $cashFlow,'session'=> $this->sessionDTO
         ]);
     }
 

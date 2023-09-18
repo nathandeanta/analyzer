@@ -45,4 +45,61 @@ class DebtsRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function filter($service,  $search,  $start,  $end)
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        $where =true;
+
+        if(!empty($service)) {
+
+            if($where) {
+                $where = false;
+
+                $queryBuilder->Where('i.service = :service');
+
+            }else{
+
+                $queryBuilder->andWhere('i.service = :service');
+            }
+
+            $queryBuilder->setParameter('service', $service);
+        }
+
+        if(!empty($search)) {
+
+            if($where) {
+                $where = false;
+
+                $queryBuilder->Where('i.describe LiKe  :description');
+
+            }else{
+
+                $queryBuilder->andWhere('i.describe LiKe  :description');
+            }
+
+            $queryBuilder->setParameter('description', '%' . $search . '%');
+        }
+
+
+        if(!empty($start)) {
+
+            if($where){
+                $where = false;
+
+                $queryBuilder->Where('i.date BETWEEN :start AND :end');
+
+            }else{
+                $queryBuilder->andWhere('i.date BETWEEN :start AND :end');
+
+            }
+
+            $queryBuilder->setParameter('start', $start);
+            $queryBuilder->setParameter('end', $end);
+
+        }
+
+        $queryBuilder->orderBy('i.date', 'DESC');
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

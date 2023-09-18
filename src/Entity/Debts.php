@@ -15,6 +15,9 @@ class Debts
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "id_user", referencedColumnName: "id_user")]
     private ?User $user;
+    #[ORM\ManyToOne(targetEntity: TypeFlow::class)]
+    #[ORM\JoinColumn(name: "id_type_flow", referencedColumnName: "id_type_flow"),]
+    private ?TypeFlow $typeFlow;
     #[ORM\Column(nullable: true)]
     private ?string $describe;
 
@@ -39,6 +42,22 @@ class Debts
 
     #[ORM\Column(type: "datetime")]
     private $createdAt;
+
+    /**
+     * @return TypeFlow|null
+     */
+    public function getTypeFlow(): ?TypeFlow
+    {
+        return $this->typeFlow;
+    }
+
+    /**
+     * @param TypeFlow|null $typeFlow
+     */
+    public function setTypeFlow(?TypeFlow $typeFlow): void
+    {
+        $this->typeFlow = $typeFlow;
+    }
 
     public function getIdDebts(): ?int
     {

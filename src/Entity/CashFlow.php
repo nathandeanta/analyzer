@@ -45,6 +45,26 @@ class CashFlow
     #[ORM\Column(type: "datetime")]
     private $createdAt;
 
+    #[ORM\ManyToOne(targetEntity: TypeFlow::class)]
+    #[ORM\JoinColumn(name: "id_type_flow", referencedColumnName: "id_type_flow"),]
+    private ?TypeFlow $typeFlow;
+
+    /**
+     * @return TypeFlow|null
+     */
+    public function getTypeFlow(): ?TypeFlow
+    {
+        return $this->typeFlow;
+    }
+
+    /**
+     * @param TypeFlow|null $typeFlow
+     */
+    public function setTypeFlow(?TypeFlow $typeFlow): void
+    {
+        $this->typeFlow = $typeFlow;
+    }
+
     /**
      * @return mixed
      */

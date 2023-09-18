@@ -26,6 +26,41 @@ class DebtsController extends Controller
         ]);
     }
 
+    #[Route('/debts/list/filter', name: 'app_debts_filter', methods:["POST", "GET"])]
+    public function getAllFilter(Request $request,DebtsRepository $debtsRepository,
+                                 SessionInterface $session): Response
+    {
+        if(($valid = $this->validSession($session)) === false) {
+            return $this->render('index/index.html.twig');
+        }
+
+        if ($request->isMethod('POST')) {
+
+            $service = $request->request->get("service");
+            $search = $request->request->get("search");
+            $start = $request->request->get("start");
+            $end = $request->request->get("end") ?? date("Y-m-d");
+            $type = $request->request->get("type");
+
+            $list = $debtsRepository->filter($service, $search, $start, $end);
+
+            return $this->render('debts/index.html.twig', [
+                'debts' => $list,
+                "bank"=> $service,
+                "search"=>$search,
+                "start"=> $start,
+                "end"=>$end,
+                "type"=>$type,
+                "title"=> "List Investments",
+                'session'=> $this->sessionDTO
+            ]);
+
+        }
+
+        return $this->redirectToRoute('app_debts_list');
+
+    }
+
     #[Route('/debts/list', name: 'app_debts_list')]
     public function list(SessionInterface $session, DebtsRepository $debtsRepository, UserRepository $userRepository): Response
     {
