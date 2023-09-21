@@ -36,7 +36,7 @@ class CashFlowRepository extends ServiceEntityRepository
     }
 
 
-    public function filter($bank, $search, $start, $end, $status, $currency)
+    public function filter($bank, $search, $start, $end, $status, $currency, $category)
     {
         $queryBuilder = $this->createQueryBuilder('c')
                     ->where('c.currency= :currency')
@@ -57,6 +57,11 @@ class CashFlowRepository extends ServiceEntityRepository
             $queryBuilder->setParameter('status', $status);
         }
 
+        if (!empty($category)) {
+            $queryBuilder->join('c.typeFlow', 'tf');
+            $queryBuilder->andWhere('tf.id_type_flow = :id_type'); // Use 'id_type_flow' instead of 'id'
+            $queryBuilder->setParameter('id_type', $category);
+        }
 
         if(!empty($start)) {
             $queryBuilder->andWhere('c.date BETWEEN :start AND :end');
@@ -69,7 +74,7 @@ class CashFlowRepository extends ServiceEntityRepository
 
     }
 
-    public function getTotalAmountForBankAndCurrencyFilter($bank, $currencyTo, $search, $start, $end, $status, $currency)
+    public function getTotalAmountForBankAndCurrencyFilter($bank, $currencyTo, $search, $start, $end, $status, $currency, $category)
     {
 
         $queryBuilder = $this->createQueryBuilder('c')
@@ -92,6 +97,12 @@ class CashFlowRepository extends ServiceEntityRepository
         if(!empty($status)) {
             $queryBuilder->andWhere('c.type = :status');
             $queryBuilder->setParameter('status', $status);
+        }
+
+        if (!empty($category)) {
+            $queryBuilder->join('c.typeFlow', 'tf');
+            $queryBuilder->andWhere('tf.id_type_flow = :id_type'); // Use 'id_type_flow' instead of 'id'
+            $queryBuilder->setParameter('id_type', $category);
         }
 
         if (!empty($start)) {

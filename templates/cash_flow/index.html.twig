@@ -7,6 +7,7 @@
 
 {% set start_param = start is defined and start is not empty ? start : '' %}
 {% set end_param = end is defined and end is not empty ? end : '' %}
+{% set category_param = category is defined and category is not empty ? category : '' %}
 
 {% block title %}Cash Flow{% endblock %}
 
@@ -129,6 +130,27 @@
 
                                 </div>
 
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Category</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-control" name="category">
+                                                        <option></option>
+                                                        {% for category in categories %}
+                                                            <option value="{{ category.idTypeFlow }}"
+                                                                        {% if category.idTypeFlow == category_param %}
+                                                                            selected
+                                                                        {% endif %}
+                                                            >{{ category.title }}</option>
+                                                        {% endfor %}
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-dribbble">Search</button>
@@ -149,6 +171,7 @@
                                     <th>Value</th>
                                     <th>Description</th>
                                     <th>Bank</th>
+                                    <th>Category</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -164,6 +187,11 @@
                                             {{ cashFlow.value }}</td>
                                         <td>{{ cashFlow.description|slice(0, 50) }}</td>
                                         <td>{{ cashFlow.bank }}</td>
+                                        <td>   {% if cashFlow.getTypeFlow() is null %}
+
+                                            {% else %}
+                                                {{ cashFlow.getTypeFlow().title }}
+                                            {% endif %}</td>
                                         <td>{{ cashFlow.date|date('d M Y H:i') }}</td>
                                         <td>
                                             {% if cashFlow.type == 'Deposit' %}

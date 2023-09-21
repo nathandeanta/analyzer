@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CashFlow;
 use App\Entity\TypeFlow;
+use App\Helper\ConvertDatesTime;
 use App\Repository\CashFlowRepository;
 use App\Repository\TypeFlowRepository;
 use App\Repository\UserRepository;
@@ -60,7 +61,8 @@ class CashFlowController extends Controller
     #[Route('/cashFlow/update/{id}', name: 'app_cash_flow_update', methods:["POST","GET"])]
     public function update(Request $request, EntityManagerInterface $entityManager,int $id,
                            CashFlowRepository $cashFlowRepository,
-    SessionInterface $session): Response
+                           TypeFlowRepository $typeFlowRepository,
+                    SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig');
@@ -72,11 +74,23 @@ class CashFlowController extends Controller
             $value = $request->request->get('value');
             $type = $request->request->get('type');
             $date = $request->request->get('date');
+            $category = $request->request->get("category");
+
 
             $cashFlow = $cashFlowRepository->find($id);
 
             if (!$cashFlow) {
                 throw $this->createNotFoundException('not found');
+            }
+
+            if(!empty($category)) {
+                $typeFlow = $typeFlowRepository->find($category);
+
+                if(!$typeFlow) {
+                    throw $this->createNotFoundException('type error');
+                }
+
+                $cashFlow->setTypeFlow($typeFlow);
             }
 
             $cashFlow->setValue($value);
@@ -128,7 +142,7 @@ class CashFlowController extends Controller
 
     #[Route('/cashFlow/all/filter', name: 'app_cash_flow_filter', methods:["POST", "GET"])]
     public function getAllFilter(Request $request, CashFlowRepository $cashFlowRepository,
-                                 SessionInterface $session): Response
+                                 SessionInterface $session, UserRepository $userRepository, TypeFlowRepository $typeFlowRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig');
@@ -142,12 +156,14 @@ class CashFlowController extends Controller
             $end = $request->request->get("end") ?? date("Y-m-d");
             $status = $request->request->get("status");
             $currency = $request->request->get("currency")??"EUR";
+            $category = $request->request->get("category");
 
-            $list = $cashFlowRepository->filter($bank, $search, $start, $end, $status, $currency);
+
+            $list = $cashFlowRepository->filter($bank, $search, $start, $end, $status, $currency,$category);
 
             $currencyTo = "BRL";
 
-            $total = $cashFlowRepository->getTotalAmountForBankAndCurrencyFilter($bank, $currencyTo, $search, $start, $end, $status, $currency);
+            $total = $cashFlowRepository->getTotalAmountForBankAndCurrencyFilter($bank, $currencyTo, $search, $start, $end, $status, $currency,$category);
 
             if($currency == "EUR") {
                 $route = 'cash_flow/index.html.twig';
@@ -155,6 +171,8 @@ class CashFlowController extends Controller
                 $route = 'cash_flow/brazil/index.html.twig';
             }
 
+            $user = $userRepository->find($this->sessionDTO->getIdUser());
+            $categories = $typeFlowRepository->findBy(['user' => $user]);
             return $this->render($route, [
                 'cashFlows' => $list,
                 'total_real' => $total[0]["total"] ?? 0,
@@ -163,7 +181,9 @@ class CashFlowController extends Controller
                 "start"=> $start,
                 "end"=>$end,
                 "status"=>$status,
-                'session'=> $this->sessionDTO
+                'session'=> $this->sessionDTO,
+                'category'=>$category,
+                'categories'=> $categories
             ]);
 
         }
@@ -197,7 +217,9 @@ class CashFlowController extends Controller
 
 
     #[Route('/cashFlow/all', name: 'app_cash_flow_all', methods:["GET"])]
-    public function getAll(Request $request, CashFlowRepository $cashFlowRepository, SessionInterface $session): Response
+    public function getAll(Request $request, CashFlowRepository $cashFlowRepository,
+                           SessionInterface $session,
+                           TypeFlowRepository $typeFlowRepository, UserRepository $userRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig');
@@ -210,25 +232,31 @@ class CashFlowController extends Controller
         $bank = "Wise";
         $currencyTo = "BRL";
 
+        $user = $userRepository->find($this->sessionDTO->getIdUser());
+        $categories = $typeFlowRepository->findBy(['user' => $user]);
+
         $total = $cashFlowRepository->getTotalAmountForBankAndCurrency($bank, $currencyTo, $currency);
 
         return $this->render('cash_flow/index.html.twig', [
             'cashFlows' => $list,
             'total_real'=> $total,
-            'session'=> $this->sessionDTO
+            'session'=> $this->sessionDTO,
+            'categories'=> $categories
         ]);
     }
 
     #[Route('/cashFlow/edit/{id}', name: 'edit_cash_flow', methods:["GET"])]
     public function editCashFlow(Request $request, CashFlowRepository $cashFlowRepository,
                                  int $id, SessionInterface $session,
-                                 TypeFlowRepository $typeFlowRepository): Response
+                                 TypeFlowRepository $typeFlowRepository, UserRepository $userRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig');
         }
 
         $cashFlow = $cashFlowRepository->find($id);
+
+        $user = $userRepository->find($this->sessionDTO->getIdUser());
 
         $categories = $typeFlowRepository->findBy(['user' => $user]);
 
@@ -237,7 +265,8 @@ class CashFlowController extends Controller
         }
 
         return $this->render('cash_flow/edit-view.html.twig', [
-            'cashFlow' => $cashFlow,'session'=> $this->sessionDTO
+            'cashFlow' => $cashFlow,'session'=> $this->sessionDTO,
+            'categories'=> $categories
         ]);
     }
 
@@ -317,8 +346,7 @@ class CashFlowController extends Controller
                            'currency' => $cashFlow->getCurrency(),
                            'date' => $cashFlow->getDate(),
                            'description' => $cashFlow->getDescription(),
-                           'type_transactiion' => $cashFlow->getTypeTransactiion(),
-                           'session'=> $this->sessionDTO
+                           'type_transactiion' => $cashFlow->getTypeTransactiion()
                        ]);
 
                        if ($existingCashFlow === null) {
@@ -386,8 +414,7 @@ class CashFlowController extends Controller
                             'currency' => $cashFlow->getCurrency(),
                             'date' => $cashFlow->getDate(),
                             'description' => $cashFlow->getDescription(),
-                            'type_transactiion' => $cashFlow->getTypeTransactiion(),
-                            'session'=> $this->sessionDTO
+                            'type_transactiion' => $cashFlow->getTypeTransactiion()
                         ]);
 
 
@@ -453,8 +480,7 @@ class CashFlowController extends Controller
                             'currency' => $cashFlow->getCurrency(),
                             'date' => $cashFlow->getDate(),
                             'description' => $cashFlow->getDescription(),
-                            'type_transactiion' => $cashFlow->getTypeTransactiion(),
-                            'session'=> $this->sessionDTO
+                            'type_transactiion' => $cashFlow->getTypeTransactiion()
                         ]);
 
 
