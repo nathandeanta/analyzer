@@ -10,7 +10,6 @@ class Controller extends AbstractController
 {
     protected  SessionDTO $sessionDTO;
 
-
     public function validSession(SessionInterface $session)
     {
         $session->start();
