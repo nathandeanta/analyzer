@@ -33,7 +33,7 @@ class Controller extends AbstractController
 
     protected function  getPathEnv(): string
     {
-        $env = $_ENV["APP_ENV"]??'dev';
+        $env = $_ENV["APP_ENV_PATH"]??'dev';
 
         if($env == 'dev') {
             return  "assets/";
