@@ -16,7 +16,7 @@ class IndexController extends Controller
     public function index(SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
         }else{
             return $this->redirectToRoute('app_dashboard');
         }
@@ -36,7 +36,7 @@ class IndexController extends Controller
     public function dashboard(SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
         }
 
         $currencyService = new CurrencyService();
@@ -48,7 +48,8 @@ class IndexController extends Controller
             'euro_to_brl' => $euro,
             'btc_to_brl' => $bitcoin,
             'usd_to_brl'=> $dolar,
-            'session'=>$this->sessionDTO
+            'session'=>$this->sessionDTO,
+            'path' => $this->getPathEnv(),
         ]);
     }
 }

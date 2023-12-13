@@ -124,7 +124,8 @@ class CashFlowController extends Controller
         return $this->render('cash_flow/create-view.html.twig',
             [
                 'session'=> $this->sessionDTO,
-                'categories'=> $categories]);
+                'categories'=> $categories,
+                'path' => $this->getPathEnv()]);
     }
 
     //app_cash_flow_uplaod_bank
@@ -183,7 +184,8 @@ class CashFlowController extends Controller
                 "status"=>$status,
                 'session'=> $this->sessionDTO,
                 'category'=>$category,
-                'categories'=> $categories
+                'categories'=> $categories,
+                'path' => $this->getPathEnv(),
             ]);
 
         }
@@ -211,7 +213,8 @@ class CashFlowController extends Controller
         return $this->render('cash_flow/brazil/index.html.twig', [
             'cashFlows' => $list,
             'total_real'=> $total,
-            'session'=> $this->sessionDTO
+            'session'=> $this->sessionDTO,
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -241,7 +244,8 @@ class CashFlowController extends Controller
             'cashFlows' => $list,
             'total_real'=> $total,
             'session'=> $this->sessionDTO,
-            'categories'=> $categories
+            'categories'=> $categories,
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -266,7 +270,8 @@ class CashFlowController extends Controller
 
         return $this->render('cash_flow/edit-view.html.twig', [
             'cashFlow' => $cashFlow,'session'=> $this->sessionDTO,
-            'categories'=> $categories
+            'categories'=> $categories,
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -301,6 +306,7 @@ class CashFlowController extends Controller
         }
 
         if ($request->isMethod('POST')) {
+
             $uploadedFile = $request->files->get('upload');
             $bank = $request->request->get("bank");
 

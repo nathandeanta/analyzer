@@ -52,7 +52,8 @@ class DebtsController extends Controller
                 "end"=>$end,
                 "type"=>$type,
                 "title"=> "List Investments",
-                'session'=> $this->sessionDTO
+                'session'=> $this->sessionDTO,
+                'path' => $this->getPathEnv(),
             ]);
 
         }
@@ -77,7 +78,8 @@ class DebtsController extends Controller
             'controller_name' => 'DebtsController',
             'session'=> $this->sessionDTO,
             'debts'=> $debts,
-            'title'=>'List of Debts'
+            'title'=>'List of Debts',
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -90,7 +92,8 @@ class DebtsController extends Controller
         return $this->render('debts/upload-view.html.twig', [
             'controller_name' => 'DebtsController',
             'title'=>"Upload Debts",
-            'session'=> $this->sessionDTO
+            'session'=> $this->sessionDTO,
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -202,7 +205,8 @@ class DebtsController extends Controller
                 return $this->render('debts/upload.html.twig', [
                     'controller_name' => 'DebtsController',
                     'session'=> $this->sessionDTO,
-                    'title'=> "Upload Debts"
+                    'title'=> "Upload Debts",
+                    'path' => $this->getPathEnv(),
                 ]);
             }
 

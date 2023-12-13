@@ -25,7 +25,7 @@ class UserController extends AbstractController
                 return $this->render('index/index.html.twig', [
                     'error' => true,
                     'type_error'=> "Error",
-                    'message_error'=> "Login invalid"
+                    'message_error'=> "Login invalid",
                 ]);
             }
 
@@ -52,7 +52,7 @@ class UserController extends AbstractController
             return $this->render('index/index.html.twig', [
                 'error' => true,
                 'type_error'=> "Error",
-                'message_error'=> "Login invalid"
+                'message_error'=> "Login invalid",
             ]);
 
         }

@@ -23,7 +23,8 @@ class InvestmentController extends Controller
         return $this->render('investment/register.html.twig', [
             'controller_name' => 'InvestmentController',
             'title'=> "Register entry",
-            'session'=> $this->sessionDTO
+            'session'=> $this->sessionDTO,
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -44,7 +45,8 @@ class InvestmentController extends Controller
             'title'=> "List Investments",
             'investments'=> $list,
             'total'=> $total[0]->getAmount(),
-            'session'=> $this->sessionDTO
+            'session'=> $this->sessionDTO,
+            'path' => $this->getPathEnv(),
         ]);
     }
 
@@ -78,7 +80,8 @@ class InvestmentController extends Controller
                 "end"=>$end,
                 "type"=>$type,
                 "title"=> "List Investments",
-                'session'=> $this->sessionDTO
+                'session'=> $this->sessionDTO,
+                'path' => $this->getPathEnv(),
             ]);
 
         }
