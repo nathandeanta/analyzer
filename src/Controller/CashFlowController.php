@@ -21,7 +21,7 @@ class CashFlowController extends Controller
     public function index(Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
         }
 
         if ($request->isMethod('POST')) {
@@ -54,7 +54,7 @@ class CashFlowController extends Controller
             return $this->redirectToRoute('app_cash_flow_all');
         }
 
-        return $this->render('cash_flow/create-view.html.twig',['session'=> $this->sessionDTO]);
+        return $this->render('cash_flow/create-view.html.twig',['session'=> $this->sessionDTO,'path' => $this->getPathEnv()]);
 
     }
 
@@ -65,7 +65,7 @@ class CashFlowController extends Controller
                     SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
         }
 
         if ($request->isMethod('POST')) {
@@ -136,7 +136,9 @@ class CashFlowController extends Controller
             return $this->render('index/index.html.twig');
         }
 
-        return $this->render('cash_flow/upload-view.html.twig',['session'=> $this->sessionDTO]);
+        return $this->render('cash_flow/upload-view.html.twig',
+            ['session'=> $this->sessionDTO,
+                'path' => $this->getPathEnv()]);
     }
 
     //app_cash_flow_filter
@@ -146,7 +148,7 @@ class CashFlowController extends Controller
                                  SessionInterface $session, UserRepository $userRepository, TypeFlowRepository $typeFlowRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
         }
 
         if ($request->isMethod('POST')) {
@@ -255,7 +257,7 @@ class CashFlowController extends Controller
                                  TypeFlowRepository $typeFlowRepository, UserRepository $userRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
         }
 
         $cashFlow = $cashFlowRepository->find($id);
@@ -509,7 +511,7 @@ class CashFlowController extends Controller
             }
         }
 
-        return $this->render('cash_flow/upload-view.html.twig',[ 'path' => $this->getPathEnv(),]);
+        return $this->render('cash_flow/upload-view.html.twig',[ 'path' => $this->getPathEnv()]);
     }
 
 
