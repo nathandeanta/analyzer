@@ -31,7 +31,7 @@ class DebtsController extends Controller
                                  SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',[ 'path' => $this->getPathEnv(),]);
         }
 
         if ($request->isMethod('POST')) {
@@ -206,7 +206,7 @@ class DebtsController extends Controller
                     'controller_name' => 'DebtsController',
                     'session'=> $this->sessionDTO,
                     'title'=> "Upload Debts",
-                    'path' => $this->getPathEnv(),
+
                 ]);
             }
 

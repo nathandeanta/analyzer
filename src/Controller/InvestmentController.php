@@ -17,7 +17,7 @@ class InvestmentController extends Controller
     public function index(SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',[ 'path' => $this->getPathEnv()]);
         }
 
         return $this->render('investment/register.html.twig', [
@@ -34,7 +34,7 @@ class InvestmentController extends Controller
                          SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',[ 'path' => $this->getPathEnv()]);
         }
 
         $list = $investmentEntityRepository->findBy([], ['date' => 'DESC']);
@@ -56,7 +56,7 @@ class InvestmentController extends Controller
                                 SessionInterface $session): Response
     {
         if(($valid = $this->validSession($session)) === false) {
-            return $this->render('index/index.html.twig');
+            return $this->render('index/index.html.twig',[ 'path' => $this->getPathEnv(),]);
         }
 
         if ($request->isMethod('POST')) {
