@@ -373,7 +373,8 @@ class CashFlowController extends Controller
 
                }
 
-                if(sizeof($lines) > 0 && $bank == "Wise"  && sizeof($lines[0]) == 19) {
+
+                if(sizeof($lines) > 0 && $bank == "Wise"  && sizeof($lines[0]) == 20) {
 
                     $start = false;
 

@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}{% endblock %}</title>
-    <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset(path ~'vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{ asset(path ~'vendors/css/vendor.bundle.base.css')}}">
-
     <link rel="stylesheet" href="{{ asset(path ~'css/style.css')}}">
-    <!-- End layout styles -->
     <link rel="shortcut icon" href="{{ asset(path ~'images/favicon.ico')}}" />
 </head>
 <body>
@@ -231,6 +227,20 @@
                         </ul>
                     </div>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic_bitcoin" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title">Bitcoins</span>
+                        <i class="menu-arrow"></i>
+                        <i class="mdi mdi-cash-usd menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic_bitcoin">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{{ path('app_bitcoin') }}">List</a></li>
+                        </ul>
+                    </div>
+                </li>
+
             </ul>
         </nav>
 

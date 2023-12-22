@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block css %}
+
+    <link rel="stylesheet" href="{{ asset(path ~'vendors/mdi/css/materialdesignicons.min.css')}}">
+    <link rel="stylesheet" href="{{ asset(path ~'vendors/css/vendor.bundle.base.css')}}">
+    <link rel="stylesheet" href="{{ asset(path ~'vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet" href="{{ asset(path ~'css/demo_1/style.css')}}">
+    <link rel="shortcut icon" href="{{ asset(path ~'images/favicon.ico')}}" />
+
+{% endblock %}
+
+{% block title %} Bitcoin{% endblock %}
+
+{% block body %}
+<!-- partial -->
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">{{title}}</h4>
+                <div class="row">
+                    <div class="col-12">
+                        <table id="order-listing" class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Coin</th>
+                                <th>buy</th>
+                                <th>high</th>
+                                <th>last</th>
+                                <th>low</th>
+                                <th>open</th>
+                                <th>pair</th>
+                                <th>sell</th>
+                                <th>vol</th>
+                                <th>date</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for item in list %}
+
+                                <tr>
+                                    <td>{{ item.Idticker }}</td>
+                                    <td>{{ item.getBitcoin().description }}  </td>
+                                    <td>{{ item.buy }}</td>
+                                    <td>{{ item.high }}</td>
+                                    <td>{{ item.last }}</td>
+                                    <td>{{ item.low }}</td>
+                                    <td>{{ item.open }}</td>
+                                    <td>{{ item.pair }}</td>
+                                    <td>{{ item.sell }}</td>
+                                    <td>{{ item.vol }}</td>
+                                    <td>{{ item.dateReal | date('d-m-Y') }}</td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021 <a href="https://www.bootstrapdash.com/" target="_blank">BootstrapDash</a>. All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+        </div>
+    </footer>
+
+    <script src=".{{ asset(path ~'vendors/js/vendor.bundle.base.js')}}"></script>
+    <script src="{{ asset(path ~'vendors/datatables.net/jquery.dataTables.js')}}"></script>
+    <script src="{{ asset(path ~'vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+    <script src="{{ asset(path ~'js/off-canvas.js')}}"></script>
+    <script src="{{ asset(path ~'js/hoverable-collapse.js')}}"></script>
+    <script src="{{ asset(path ~'js/misc.js')}}"></script>
+    <script src="{{ asset(path ~'js/settings.js')}}]"></script>
+    <script src="{{ asset(path ~'js/todolist.js')}}"></script>
+    <script src="{{ asset(path ~'js/jquery.cookie.js')}}"></script>
+    <script src="{{ asset(path ~'js/data-table.js')}}"></script>
+
+    {% endblock %}
