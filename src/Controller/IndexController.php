@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TotalRepository;
 use App\Service\CurrencyService;
 use App\Service\EmailService;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,7 @@ class IndexController extends Controller
     }
 
     #[Route('/dashboard', name: 'app_dashboard')]
-    public function dashboard(SessionInterface $session): Response
+    public function dashboard(SessionInterface $session, TotalRepository $totalRepository): Response
     {
         if(($valid = $this->validSession($session)) === false) {
             return $this->render('index/index.html.twig',['path' => $this->getPathEnv()]);
@@ -44,12 +45,18 @@ class IndexController extends Controller
         $bitcoin =   $currencyService->getCoinToBRL("BTC-BRL");
         $dolar  = $currencyService->getCoinToBRL("USD-BRL");
 
+        $CPTS11 = $currencyService->getFii('CPTS11');
+
+        $total =  $totalRepository->findAll();
+
         return $this->render('index/dashboard.html.twig', [
             'euro_to_brl' => $euro,
             'btc_to_brl' => $bitcoin,
             'usd_to_brl'=> $dolar,
             'session'=>$this->sessionDTO,
             'path' => $this->getPathEnv(),
+            'total'=> $total[0]->getAmount(),
+            'fii'=> $CPTS11
         ]);
     }
 }
